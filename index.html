@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Heart OBJloader</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <style>
+    body {
+      font-family: Monospace;
+      background-color: #33313180;
+      color: #fff;
+      margin: 0px;
+      overflow: hidden;
+    }
+
+    #info {
+      color: #fff;
+      position: absolute;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      z-index: 100;
+      display: block;
+    }
+
+    #info a,
+    .button {
+      color: #f00;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="info">
+    Heart loader
+  </div>
+
+  <script src="http://threejs.org/build/three.min.js"></script>
+  <script src="http://threejs.org/examples/js/loaders/OBJLoader.js"></script>
+  <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+  <script src="http://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="http://threejs.org/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"></script>
+
+  <!-- <script src="http://threejs.org/examples/js/Detector.js"></script> -->
+  <script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+
+  <script>
+
+    // clearing the console (just a CodePen thing)
+
+    console.clear();
+
+    // there are 3 parts to this
+    //
+    // Scene:           Setups and manages threejs rendering
+    // loadModel:       Loads the 3d obj file
+    // setupAnimation:  Creates all the GSAP 
+    //                  animtions and scroll triggers 
+    //
+    // first we call loadModel, once complete we call
+    // setupAnimation which creates a new Scene
+
+    class Scene {
+      constructor(model) {
+        this.views = [
+          { bottom: 0, height: 1 },
+          { bottom: 0, height: 0 }
+        ];
+
+        this.renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: true
+        });
+
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+
+        document.body.appendChild(this.renderer.domElement);
+
+        // scene
+
+        this.scene = new THREE.Scene();
+
+        for (var ii = 0; ii < this.views.length; ++ii) {
+
+          var view = this.views[ii];
+          var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+          camera.position.fromArray([0, 0, 180]);
+          camera.layers.disableAll();
+          camera.layers.enable(ii);
+          view.camera = camera;
+          camera.lookAt(new THREE.Vector3(0, 5, 0));
+        }
+
+        //light
+
+        this.light = new THREE.PointLight(0xffffff, 0.75);
+        this.light.position.z = 150;
+        this.light.position.x = 70;
+        this.light.position.y = -20;
+        this.scene.add(this.light);
+
+        this.softLight = new THREE.AmbientLight(0xffffff, 1.5);
+        this.scene.add(this.softLight)
+
+        // group
+
+        this.onResize();
+        window.addEventListener('resize', this.onResize, false);
+
+        var edges = new THREE.EdgesGeometry(model.children[0].geometry);
+        let line = new THREE.LineSegments(edges);
+        line.material.depthTest = false;
+        line.material.opacity = 0.5;
+        line.material.transparent = true;
+        line.position.x = 0.5;
+        line.position.z = -1;
+        line.position.y = 0.2;
+
+        this.modelGroup = new THREE.Group();
+
+        model.layers.set(0);
+        line.layers.set(1);
+
+        this.modelGroup.add(model);
+        this.modelGroup.add(line);
+        this.scene.add(this.modelGroup);
+      }
+
+      render = () => {
+        for (var ii = 0; ii < this.views.length; ++ii) {
+
+          var view = this.views[ii];
+          var camera = view.camera;
+
+          var bottom = Math.floor(this.h * view.bottom);
+          var height = Math.floor(this.h * view.height);
+
+          this.renderer.setViewport(0, 0, this.w, this.h);
+          this.renderer.setScissor(0, bottom, this.w, height);
+          this.renderer.setScissorTest(true);
+
+          camera.aspect = this.w / this.h;
+          this.renderer.render(this.scene, camera);
+        }
+      }
+
+      onResize = () => {
+        this.w = window.innerWidth;
+        this.h = window.innerHeight;
+
+        for (var ii = 0; ii < this.views.length; ++ii) {
+          var view = this.views[ii];
+          var camera = view.camera;
+          camera.aspect = this.w / this.h;
+          let camZ = (screen.width - (this.w * 1)) / 3;
+          camera.position.z = camZ < 180 ? 180 : camZ;
+          camera.updateProjectionMatrix();
+        }
+
+        this.renderer.setSize(this.w, this.h);
+        this.render();
+      }
+    }
+
+    function loadModel() {
+      // gsap.registerPlugin(ScrollTrigger);
+      // gsap.registerPlugin(DrawSVGPlugin);
+      // gsap.set('#line-length', { drawSVG: 0 })
+      // gsap.set('#line-wingspan', { drawSVG: 0 })
+      // gsap.set('#circle-phalange', { drawSVG: 0 })
+
+      var object;
+      var mat
+      function onModelLoaded() {
+        object.traverse(function (child) {
+           mat = new THREE.MeshPhongMaterial({
+            color: 0x330000, specular: 0xffffff,
+            shininess: 4, flatShading: true
+          });
+          child.material = mat;
+          
+        });
+
+        setupAnimation(object);
+      }
+
+      var manager = new THREE.LoadingManager(onModelLoaded);
+      manager.onProgress = (item, loaded, total) => console.log(item, loaded, total);
+
+      var loader = new THREE.OBJLoader(manager);
+      loader.load('1410 Heart.obj', function (obj) { object = obj; });
+    }
+
+    function setupAnimation(model) {
+
+      let scene = new Scene(model);
+      let plane = scene.modelGroup;
+      scene.render();
+      
+      // let tau = Math.PI * 2;
+
+      // gsap.set(plane.rotation, { y: tau * -.25 });
+      console.log(plane);
+      plane.scale.x = 1.5;
+      plane.scale.y = 1.5;
+      plane.scale.z = 1.5;
+      gsap.set(plane.position, { x: 0, y: -32, z: -60 });
+      gsap.set(plane.rotation, { x: 0.099, y: 5.849, z: -0.33 });
+      scene.render();
+
+      var deg = 0.25
+      function animate() {
+        requestAnimationFrame(animate);
+        // plane.rotation.x += 0.01;
+        plane.rotation.y += 0.01;
+        scene.render();
+
+      }
+
+      // TweenLite.defaultEase = Linear.easeNone;
+      // var dur = 1.5;
+      // var tl = new TimelineMax({ repeat: -1, yoyo: true, repeatDelay: 0.5 });
+      // tl.from(plane.children[0].material.color, dur, { r: 1, g: 0, b: 0 });
+      // tl.to(plane.children[0].material.color, dur, { r: 200, g: 0, b: 0 }, 0);
+
+      animate();
+
+
+    }
+
+    loadModel();
+  </script>
+
+</body>
+
+</html>
