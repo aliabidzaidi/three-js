@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Heart OBJloader</title>
+  <title>Brain OBJloader</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <style>
@@ -37,7 +37,7 @@
 
 <body>
   <div id="info">
-    Heart loader
+    Brain loader
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"></script>
 
@@ -183,8 +183,8 @@
       function onModelLoaded() {
         object.traverse(function (child) {
            mat = new THREE.MeshPhongMaterial({
-            color: 0x550001, specular: 0xffffff,
-            shininess: 3, flatShading: true
+            color: 0x0045e0, specular: 0xffffff,
+            shininess: 1, flatShading: true
           });
           child.material = mat;
           
@@ -197,7 +197,7 @@
       manager.onProgress = (item, loaded, total) => console.log(item, loaded, total);
 
       var loader = new THREE.OBJLoader(manager);
-      loader.load('heart/1410 Heart.obj', function (obj) { object = obj; });
+      loader.load('brain/Brain.obj', function (obj) { object = obj; });
     }
 
     function setupAnimation(model) {
@@ -210,18 +210,18 @@
 
       // gsap.set(plane.rotation, { y: tau * -.25 });
       console.log(plane);
-      plane.scale.x = 1.5;
-      plane.scale.y = 1.5;
-      plane.scale.z = 1.5;
-      gsap.set(plane.position, { x: 0, y: -32, z: -60 });
-      gsap.set(plane.rotation, { x: 0.099, y: 0, z: -0.38 });
+      // plane.scale.x = 1.5;
+      // plane.scale.y = 1.5;
+      // plane.scale.z = 1.5;
+      gsap.set(plane.position, { x: 0, y: -42, z: -450 });
+      // gsap.set(plane.rotation, { x: 0.099, y: 0, z: -0.38 });
       scene.render();
 
       var deg = 0.25
       function animate() {
         requestAnimationFrame(animate);
         // plane.rotation.x += 0.01;
-        plane.rotation.y += 0.01;
+        plane.rotation.y += 0.007;
         scene.render();
 
       }
