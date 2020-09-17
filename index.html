@@ -5,50 +5,26 @@
   <title>Heart OBJloader</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <style>
-    body {
-      font-family: Monospace;
-      background-color: #33313180;
-      color: #fff;
-      margin: 0px;
-      overflow: hidden;
-    }
-
-    #info {
-      color: #fff;
-      position: absolute;
-      top: 10px;
-      width: 100%;
-      text-align: center;
-      z-index: 100;
-      display: block;
-    }
-
-    #info a,
-    .button {
-      color: #f00;
-      font-weight: bold;
-      text-decoration: underline;
-      cursor: pointer
-    }
-
-  </style>
+  <link rel="stylesheet" href="style.css">
+  
 </head>
 
 <body>
-  <div id="info">
-    Heart loader
+  <div class="outer center">
+    <div id="info">
+      <a href="/">Heart</a>
+      <a href="/moon.html">Moon</a>
+      <a href="/brain.html">Brain</a>
+    </div>
+  
+    <canvas id="star-canvas" height="100%" width="100%"></canvas>
   </div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"></script>
 
   <script src="https://threejs.org/build/three.min.js"></script>
   <script src="https://threejs.org/examples/js/loaders/OBJLoader.js"></script>
-  <!-- <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://threejs.org/examples/js/loaders/RGBELoader.js"></script> -->
-
-  <!-- <script src="http://threejs.org/examples/js/Detector.js"></script> -->
-  <!-- <script src="http://threejs.org/examples/js/libs/stats.min.js"></script> -->
+  <script src="background.js"></script>
 
   <script>
 
@@ -97,7 +73,7 @@
           camera.layers.disableAll();
           camera.layers.enable(ii);
           view.camera = camera;
-          camera.lookAt(new THREE.Vector3(0, 5, 0));
+          camera.lookAt(new THREE.Vector3(0, 2, 0));
         }
 
         //light
@@ -182,12 +158,12 @@
       var mat
       function onModelLoaded() {
         object.traverse(function (child) {
-           mat = new THREE.MeshPhongMaterial({
+          mat = new THREE.MeshPhongMaterial({
             color: 0x550001, specular: 0xffffff,
             shininess: 3, flatShading: true
           });
           child.material = mat;
-          
+
         });
 
         setupAnimation(object);
@@ -205,7 +181,7 @@
       let scene = new Scene(model);
       let plane = scene.modelGroup;
       scene.render();
-      
+
       // let tau = Math.PI * 2;
 
       // gsap.set(plane.rotation, { y: tau * -.25 });
@@ -221,7 +197,7 @@
       function animate() {
         requestAnimationFrame(animate);
         // plane.rotation.x += 0.01;
-        plane.rotation.y += 0.01;
+        plane.rotation.y += 0.006;
         scene.render();
 
       }

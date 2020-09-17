@@ -1,0 +1,88 @@
+* {
+  margin: 0 auto;
+}
+
+canvas {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+  /* visibility: hidden; */
+  opacity: 1;
+}
+
+.center {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: absolute;
+  margin: auto;
+}
+
+.outer {
+  /* background: rgb(34, 30, 51);
+  background: -webkit-linear-gradient(
+    bottom,
+    rgb(34, 30, 51) 0%,
+    rgba(32, 38, 38, 1) 100%
+  );
+  background: -o-linear-gradient(
+    bottom,
+    rgb(34, 30, 51) 0%,
+    rgba(32, 38, 38, 1) 100%
+  );
+  background: linear-gradient(
+    to top,
+    rgb(51, 45, 30) 100%,
+    rgba(32, 38, 38, 1) 0%
+  ); */
+  background: url("/milky-waay.jpg") repeat;
+  height: 100%;
+  width: 100%;
+}
+
+img {
+  height: 45%;
+  opacity: 1;
+  transform: rotate(-110deg);
+}
+
+body {
+  font-family: Monospace;
+
+  background-color:  rgb(34, 30, 51);
+
+  
+  color: #fff;
+  margin: 0px;
+  overflow: hidden;
+}
+
+#info {
+  color: #fff;
+  /* position: absolute; */
+  margin-top: 10px;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  z-index: 100;
+  display: block;
+}
+
+#info a,
+.button {
+  font-size: 18px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 10px;
+}
+
+#info a:hover {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
